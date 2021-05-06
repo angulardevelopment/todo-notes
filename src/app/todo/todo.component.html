@@ -1,0 +1,34 @@
+<div class="head" id="responsive">
+  <div>
+      <button class="btn" (click)="addNote()"><i class="fa fa-plus"></i>Add </button>
+      <button class="btn" (click)="editNote()"><i class="fa fa-edit"></i> Edit</button>
+      <button class="btn" (click)="deleteNote()"><i class="fa fa-remove"></i>Remove </button>
+      <button class="btn" (click)="saveNote()"><i class="fa fa-save"></i> Save</button>
+  </div>
+  <div class="container">
+      <div class="fontuser">
+          <input type="text" [(ngModel)]="searchNotes" placeholder="Search">
+          <i class="fa fa-search"></i>
+      </div>
+  </div>
+</div>
+
+
+
+<div class="head">
+
+  <div class="scroll">
+      <div *ngFor="let j= index;let item of taskList|search:'title,content':searchNotes"
+          [ngClass]="{'active': selectedNote == item}" (click)="selectedNote = item">
+          <h1 id="textValue">{{item.content}}</h1>
+          <span style="font-weight: 600;">{{item.currentTime}}</span>
+          <span>{{' ' + item.title}}</span>
+      </div>
+  </div>
+
+  <div class="rightbox">
+      <span class="aligndate">{{selectedNote.modifiedTime}}</span> <br>
+     <textarea class="textbox" type="text" [ngModel]="selectedNote.content" (ngModelChange)="selectedNote.content = $event" *ngIf="selectedNote" [disabled]="enableDisableSpan" #inputToFocus> </textarea>
+
+  </div>
+</div>
