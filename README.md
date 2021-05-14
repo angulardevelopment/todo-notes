@@ -2,6 +2,7 @@
 
 basic to do list app
 Notes app
+With Shift key you can select the multiple entries.
 
 # TodoApp
 
