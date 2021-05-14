@@ -1,8 +1,10 @@
 # About
 
-basic to do list app
+Local Storage- Simple todo list app using localstorage. 
 Notes app
 With Shift key you can select the multiple entries.
+localStorage object stores the data with no expiration date.
+			
 
 # TodoApp
 
