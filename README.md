@@ -5,6 +5,12 @@ Notes app
 With Shift key you can select the multiple entries.
 localStorage object stores the data with no expiration date.
 			
+      Create a basic ToDo app that allows you to add, delete and mark items complete. 
+●	It should have a textbox where the user can type in the text for the item, and hit enter or click save to save the item in the list. 
+●	The list of items should be displayed in a list below the text box
+●	The user can delete the item from the list
+●	The user can mark the item complete in the list which will show the item, struck off
+
 
 # TodoApp
 
