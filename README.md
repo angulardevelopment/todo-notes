@@ -28,6 +28,13 @@ I'm Sam, and I'm passionate about product engineering and web development. I cre
 -	The user can delete the item from the list
 -	The user can mark the item complete in the list which will show the item, struck off
 
+### Packages used
+-   @compodoc/compodoc
+
+### Useful commands
+- npm run compodoc
+- npm run start
+
 ## Subscribe and Stay Updated!
 
 Don't miss out on new videos! Subscribe to my channel and hit the notification bell 🔔 to receive updates whenever I upload fresh content. Let's learn, laugh, and explore together!
