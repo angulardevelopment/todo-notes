@@ -1,0 +1,14 @@
+<div>
+  <div *ngFor="let j = index; let item; of: taskList" class="scroll">
+    <input
+      type="checkbox"
+      class="form-check-input"
+      id="complete"
+      (change)="onChange(item, $event)"
+    />
+    <h1 id="textValue">{{ item.content }}</h1>
+    <span style="font-weight: 600;">{{ item.currentTime }}</span>
+    <span>{{ ' ' + item.title }}</span>
+    <span>{{ item.isCompleted }}</span>
+  </div>
+</div>

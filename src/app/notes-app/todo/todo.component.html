@@ -1,0 +1,23 @@
+<div class="head" id="responsive">
+  <div>
+    <button class="btn"><i class="fa fa-plus"></i>List</button>
+  </div>
+
+  <div>
+    <div>
+      <select (change)="onSelected($event)" class="btn">
+        <option default>Pick a Status</option>
+        <option>{{ taskStatus.All }}</option>
+        <option>{{ taskStatus.Completed }}</option>
+        <option>{{ taskStatus.Incomplete }}</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<app-todo-list
+  [taskList]="taskList"
+  [selectedItem]="selectedItem"
+></app-todo-list>
+
+<app-add-todo></app-add-todo>
