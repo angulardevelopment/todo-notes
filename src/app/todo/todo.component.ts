@@ -105,3 +105,79 @@ interface INoteModel {
   currentTime: string;
 
 }
+
+/**
+
+* Add the explanation of the following property
+
+*/
+
+// studentList;
+
+// For method call use below syntax
+
+/**
+
+* performs a very special operation
+
+* @example
+
+* simply call it with 1 values
+
+* fetchList(1)
+
+*
+
+* @param {number} studentId first value
+
+* @returns the student list
+
+*/
+
+// To ignore any method like the constructor
+
+/**
+
+* @ignore
+
+*/
+
+// To add the description of any file by writing things at the top like
+
+/**
+
+* provider for super difficult
+
+*/
+
+// @Injectable
+
+// #detailed description of the math provider - readme format
+
+// ## How to use the provider
+
+// Lorem ispsum..
+
+/**
+
+* Supported comment
+
+*/
+
+// For @link you can use these three syntaxes like JSDoc:
+
+// • for an internal reference
+
+// {@link Todo}
+
+// [Todo]{@link Todo}
+
+// {@link Todo|TodoClass}
+
+// • for an external link
+
+// [Google]{@link http://www.google.com}
+
+// {@link http://www.apple.com|Apple}
+
+// {@link https://github.com GitHub}
