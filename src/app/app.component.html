@@ -1,2 +1,12 @@
 <!-- <app-todo></app-todo> -->
 <notes-app></notes-app>
+
+<div *ngIf="routes && routes.length">
+    <h2>Available Routes</h2>
+    <ul>
+      <li *ngFor="let route of routes">
+        <a [routerLink]="route.path">{{ route.path }} (Component: {{ route.component.name }})</a>
+      </li>
+      
+    </ul>
+  </div>
