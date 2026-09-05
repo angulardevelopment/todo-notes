@@ -23,7 +23,6 @@
             "outputPath": "dist/todo-app",
             "index": "src/index.html",
             "main": "src/main.ts",
-            "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
             "aot": true,
             "assets": [
@@ -68,25 +67,24 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "todo-app:build"
+            "buildTarget": "todo-app:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "todo-app:build:production"
+              "buildTarget": "todo-app:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "todo-app:build"
+            "buildTarget": "todo-app:build"
           }
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "main": "src/test.ts",
-            "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.spec.json",
             "karmaConfig": "karma.conf.js",
             "assets": [
@@ -127,7 +125,6 @@
       }
     }
   },
-  "defaultProject": "todo-app",
   "cli": {
     "analytics": "352bd740-4bbc-4d75-b472-0e799338fe62"
   }

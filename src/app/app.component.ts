@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
-import { Routes, Router } from '@angular/router';
+import { Routes, Router, RouterLink } from '@angular/router';
+import { NotesComponent } from './notes-app/todo/todo.component';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
+  imports: [NotesComponent, RouterLink]
 })
 export class AppComponent {
   routes: Routes = [];
