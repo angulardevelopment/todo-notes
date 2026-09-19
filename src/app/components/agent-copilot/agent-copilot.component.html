@@ -1,0 +1,126 @@
+<!-- Floating Action Button -->
+<button
+  class="copilot-fab"
+  (click)="toggleOpen()"
+  [class.active]="isOpen"
+  title="Chat with your AI Copilot"
+>
+  <span class="fab-icon">🤖</span>
+  <span class="fab-text">AI Copilot</span>
+  <span class="fab-pulse"></span>
+</button>
+
+<!-- Slide-out Drawer -->
+@if (isOpen) {
+  <div class="copilot-drawer">
+    <!-- Header -->
+    <div class="drawer-header">
+      <div class="agent-profile">
+        <div class="agent-avatar">🤖</div>
+        <div class="agent-details">
+          <div class="agent-name">Smart Copilot</div>
+          <div class="agent-status">
+            <span class="status-dot"></span> Active &bull; Tool-Enabled
+          </div>
+        </div>
+      </div>
+
+      <div class="header-btns">
+        <button class="icon-btn" (click)="clearHistory()" title="Clear chat history">
+          🗑️
+        </button>
+        <button class="icon-btn" (click)="toggleOpen()" title="Close chat">
+          &times;
+        </button>
+      </div>
+    </div>
+
+    <!-- Quick Prompts Chips -->
+    <div class="quick-prompts-bar">
+      @for (chip of quickPrompts; track chip) {
+        <button class="prompt-chip" (click)="sendQuickPrompt(chip)">
+          {{ chip }}
+        </button>
+      }
+    </div>
+
+    <!-- Messages Container -->
+    <div class="drawer-messages" #messagesContainer>
+      @for (msg of messages; track msg.id) {
+        <div class="message-wrapper" [class.user]="msg.role === 'user'" [class.agent]="msg.role === 'model'">
+          @if (msg.role === 'model') {
+            <div class="msg-avatar">🤖</div>
+          }
+
+          <div class="msg-bubble-group">
+            <!-- Tool Invocation Badges -->
+            @if (msg.toolCalls && msg.toolCalls.length) {
+              <div class="tool-calls-container">
+                @for (tool of msg.toolCalls; track tool.name) {
+                  <div class="tool-call-badge" [class.running]="tool.status === 'running'" [class.done]="tool.status === 'done'" [class.error]="tool.status === 'error'">
+                    <span class="tool-icon">
+                      @if (tool.status === 'running') { ⏳ }
+                      @if (tool.status === 'done') { ⚡ }
+                      @if (tool.status === 'error') { ⚠️ }
+                    </span>
+                    <span class="tool-name">Tool: <strong>{{ tool.name }}</strong></span>
+                    <span class="tool-status-pill">
+                      {{ tool.status === 'running' ? 'Executing...' : (tool.status === 'done' ? 'Success' : 'Failed') }}
+                    </span>
+                  </div>
+                }
+              </div>
+            }
+
+            <!-- Message Text -->
+            @if (msg.text) {
+              <div class="msg-bubble">
+                <div class="msg-text">{{ msg.text }}</div>
+              </div>
+            }
+
+            <div class="msg-footer">
+              <span class="msg-timestamp">{{ msg.timestamp }}</span>
+              @if (msg.telemetry) {
+                <span class="telemetry-pill" title="Token count and calculated cost">
+                  ⚡ {{ msg.telemetry.tokens }} tok • ${{ msg.telemetry.costUsd < 0.01 ? msg.telemetry.costUsd.toFixed(5) : msg.telemetry.costUsd.toFixed(3) }}
+                </span>
+              }
+            </div>
+          </div>
+        </div>
+      }
+
+      @if (isThinking) {
+        <div class="thinking-row">
+          <div class="msg-avatar">🤖</div>
+          <div class="thinking-bubble">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Input Bar -->
+    <div class="drawer-input-bar">
+      <input
+        type="text"
+        [(ngModel)]="userInput"
+        (keyup.enter)="send()"
+        placeholder="Ask to create notes, break down tasks, summarize..."
+        class="chat-input"
+        [disabled]="isThinking"
+      />
+      <button
+        class="send-btn"
+        (click)="send()"
+        [disabled]="isThinking || !userInput.trim()"
+      >
+        <span>Send</span>
+        <span class="arrow">&rarr;</span>
+      </button>
+    </div>
+  </div>
+}

@@ -1,56 +1,98 @@
-.active {
-    background: #faedbe;
+.task-board-container {
+  max-width: 900px;
+  margin: 0 auto;
 }
 
-.head{
+.board-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #ffffff;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.board-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  .board-title {
+    margin: 0;
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #0f172a;
+  }
+
+  .stats-pills {
     display: flex;
+    gap: 0.5rem;
+
+    .stat-pill {
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      background: #f1f5f9;
+      color: #475569;
+
+      &.success {
+        background: #dcfce7;
+        color: #15803d;
+      }
+    }
+  }
 }
 
+.filter-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 
-.textbox{
-    font-size: x-large;
-    border-width: 0px;
-    border: none;
+  .btn-standup {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.45rem 0.9rem;
+    background: linear-gradient(135deg, #fff7ed 0%, #fef3c7 100%);
+    border: 1px solid #fcd34d;
+    color: #b45309;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+
+    &:hover {
+      background: linear-gradient(135deg, #ffedd5 0%, #fde68a 100%);
+      box-shadow: 0 2px 6px rgba(245, 158, 11, 0.25);
+      transform: translateY(-1px);
+    }
+  }
+
+  .filter-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #64748b;
+  }
+
+  .filter-select {
+    padding: 0.45rem 0.85rem;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #1e293b;
     outline: none;
-    background-color: #eee;
-    width: 70%;
-}
+    cursor: pointer;
+    background: #ffffff;
+    transition: all 0.15s;
 
-.rightbox{
-    background-color: #eee;
-    width: 70%;
-}
-
-
-.btn {
-    background-color: #f7fcfd; /* Blue background */
-    border: none; /* Remove borders */
-    padding: 12px 16px; /* Some padding */
-    font-size: 16px; /* Set a font size */
-    cursor: pointer; /* Mouse pointer on hover */
+    &:focus {
+      border-color: #6366f1;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+    }
   }
-  
-  /* Darker background on mouse-over */
-  .btn:hover {
-    background-color: RoyalBlue;
-    opacity: 0.8;  
-  }
-
-
-  input[type=text] {  
-      padding: 12px 40px;  
-    border-radius: 10px;
-      display: inline-block;  
-      border: 1px solid #ccc;  
-      box-sizing: border-box;  
-  }  
-    
-
-
-
-.aligndate {
-display: flex;
-    justify-content: center;
 }
-
-

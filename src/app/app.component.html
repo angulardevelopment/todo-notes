@@ -1,15 +1,79 @@
-<!-- <app-todo></app-todo> -->
-<notes-app></notes-app>
+<header class="app-header">
+  <div class="header-container">
+    <div class="brand">
+      <div class="brand-icon">✨</div>
+      <div class="brand-text">
+        <span class="brand-title">SmartNotes</span>
+        <span class="brand-subtitle">AI-Powered Notes & Tasks</span>
+      </div>
+    </div>
 
-@if (routes && routes.length) {
-  <div>
-    <h2>Available Routes</h2>
-    <ul>
-      @for (route of routes; track route) {
-        <li>
-          <a [routerLink]="route.path">{{ route.path }} (Component: {{ route.component.name }})</a>
-        </li>
-      }
-    </ul>
+    <nav class="main-nav">
+      <a
+        routerLink="/todo"
+        routerLinkActive="active"
+        class="nav-item"
+      >
+        <span class="nav-icon">📝</span>
+        <span>Notes Editor</span>
+      </a>
+      <a
+        routerLink="/notes"
+        routerLinkActive="active"
+        class="nav-item"
+      >
+        <span class="nav-icon">✅</span>
+        <span>Task Board</span>
+      </a>
+    </nav>
+
+    <div class="header-actions">
+      <button
+        type="button"
+        class="cost-status-btn"
+        (click)="openCostDashboard()"
+        title="View AI Query Costs & Scale Simulator"
+      >
+        <span class="btn-icon">📊</span>
+        <span class="btn-text">
+          @if (costTracker.summary$ | async; as summary) {
+            Cost: {{ formatUsd(summary.totalCostUsd) }}
+          } @else {
+            Cost: $0.00
+          }
+        </span>
+      </button>
+
+      <button
+        type="button"
+        class="ai-status-btn"
+        [class.connected]="isAiReady()"
+        (click)="openSettings()"
+        title="Open AI Settings"
+      >
+        <span class="status-indicator"></span>
+        <span class="btn-text">
+          @if (isAiReady()) {
+            ✨ AI Ready ({{ aiService.getSelectedModel() }})
+          } @else {
+            ⚠️ Setup AI Key
+          }
+        </span>
+      </button>
+    </div>
   </div>
+</header>
+
+<main class="main-content">
+  <router-outlet></router-outlet>
+</main>
+
+@if (showAiSettings) {
+  <app-ai-settings (close)="closeSettings()"></app-ai-settings>
 }
+
+@if (showCostDashboard) {
+  <app-ai-cost-dashboard (close)="closeCostDashboard()"></app-ai-cost-dashboard>
+}
+
+<app-agent-copilot></app-agent-copilot>

@@ -1,16 +1,111 @@
-<div>
+<div class="todo-items-list">
+  @if (toastMessage) {
+    <div class="toast-banner" [class]="toastType">
+      <span>{{ toastMessage }}</span>
+      <button class="toast-close" (click)="toastMessage = null">&times;</button>
+    </div>
+  }
+
   @for (item of taskList; track item.id; let j = $index) {
-    <div class="scroll">
-      <input
-        type="checkbox"
-        class="form-check-input"
-        id="complete"
-        (change)="onChange(item, $event)"
+    <div
+      class="todo-item-card"
+      [class.completed]="isDone(item)"
+      [class.is-editing]="editingId === item.id"
+    >
+      <div class="item-checkbox-col">
+        <input
+          type="checkbox"
+          class="custom-checkbox"
+          [checked]="isDone(item)"
+          (change)="onChange(item, $event)"
+          id="todo-{{ item.id }}"
         />
-        <h1 id="textValue">{{ item.content }}</h1>
-        <span style="font-weight: 600;">{{ item.currentTime }}</span>
-        <span>{{ ' ' + item.title }}</span>
-        <span>{{ item.isCompleted }}</span>
       </div>
-    }
-  </div>
+
+      <!-- Content Column -->
+      <div class="item-content-col">
+        @if (editingId === item.id) {
+          <!-- Inline Edit Form -->
+          <div class="edit-form-box">
+            <input
+              type="text"
+              class="edit-input-title"
+              [(ngModel)]="editTitle"
+              placeholder="Task title..."
+              (keydown.enter)="saveEdit(item)"
+            />
+            <textarea
+              class="edit-input-desc"
+              [(ngModel)]="editContent"
+              placeholder="Task details (optional)..."
+              rows="2"
+            ></textarea>
+            <div class="edit-actions-row">
+              <button class="btn-save-edit" (click)="saveEdit(item)">
+                💾 Save
+              </button>
+              <button class="btn-cancel-edit" (click)="cancelEdit()">
+                Cancel
+              </button>
+            </div>
+          </div>
+        } @else {
+          <!-- Read Mode -->
+          <div class="item-title">
+            {{ item.title }}
+          </div>
+          @if (item.content && item.content !== item.title) {
+            <div class="item-desc">
+              {{ item.content }}
+            </div>
+          }
+          <div class="item-meta">
+            <span class="item-time">🕒 {{ item.currentTime || item.modifiedTime }}</span>
+          </div>
+        }
+      </div>
+
+      <!-- Status & Actions Column -->
+      @if (editingId !== item.id) {
+        <div class="item-side-col">
+          <span
+            class="status-badge"
+            [class.is-done]="isDone(item)"
+          >
+            {{ isDone(item) ? 'Done' : 'Pending' }}
+          </span>
+
+          <div class="actions-group">
+            <button
+              class="action-btn edit-btn"
+              (click)="startEdit(item)"
+              title="Edit Task"
+            >
+              ✏️
+            </button>
+            <button
+              class="action-btn note-btn"
+              (click)="saveAsNote(item)"
+              title="Save Task as Note in Notes Editor"
+            >
+              📝
+            </button>
+            <button
+              class="action-btn delete-btn"
+              (click)="deleteItem(item)"
+              title="Delete Task"
+            >
+              🗑️
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  } @empty {
+    <div class="empty-tasks">
+      <span class="empty-icon">🎉</span>
+      <h4>No tasks found</h4>
+      <p>All caught up or try switching the status filter above!</p>
+    </div>
+  }
+</div>

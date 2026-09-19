@@ -1,0 +1,108 @@
+<div class="modal-backdrop" (click)="onClose()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="header-title">
+        <span class="ai-badge">✨ AI</span>
+        <h3>Gemini AI Configuration</h3>
+      </div>
+      <button class="close-btn" (click)="onClose()" title="Close">&times;</button>
+    </div>
+
+    <div class="modal-body">
+      <p class="intro-text">
+        Supercharge your Todo & Notes app with Google Gemini. Enter your API key below to enable instant AI summarization, tone polishing, grammar corrections, and task breakdowns.
+      </p>
+
+      <div class="form-group">
+        <label for="apiKey">
+          Google Gemini API Key
+          <span class="required">*</span>
+        </label>
+        <div class="input-with-action">
+          <input
+            id="apiKey"
+            [type]="showKey ? 'text' : 'password'"
+            [(ngModel)]="apiKey"
+            placeholder="AIzaSy..."
+            class="form-input"
+          />
+          <button
+            type="button"
+            class="toggle-btn"
+            (click)="showKey = !showKey"
+            title="{{ showKey ? 'Hide key' : 'Show key' }}"
+          >
+            {{ showKey ? '🙈 Hide' : '👁️ Show' }}
+          </button>
+        </div>
+        <small class="helper-text">
+          Don't have a key?
+          <a
+            href="https://aistudio.google.com/app/apikey"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="link"
+          >
+            Get a free Gemini API key from Google AI Studio &rarr;
+          </a>
+        </small>
+      </div>
+
+      <div class="form-group">
+        <label for="modelSelect">Select AI Model</label>
+        <select id="modelSelect" [(ngModel)]="selectedModel" class="form-select">
+          @for (model of models; track model.id) {
+            <option [value]="model.id">
+              {{ model.name }} ({{ model.description }})
+            </option>
+          }
+        </select>
+      </div>
+
+      <!-- Test Status / Alerts -->
+      @if (testResult) {
+        <div
+          class="alert-box"
+          [class.success]="testResult.success"
+          [class.error]="!testResult.success"
+        >
+          <span class="alert-icon">{{ testResult.success ? '✅' : '⚠️' }}</span>
+          <span class="alert-msg">{{ testResult.message }}</span>
+        </div>
+      }
+
+      @if (saveSuccess) {
+        <div class="alert-box success">
+          <span class="alert-icon">🎉</span>
+          <span class="alert-msg">Settings saved successfully!</span>
+        </div>
+      }
+    </div>
+
+    <div class="modal-footer">
+      <button
+        type="button"
+        class="btn-secondary"
+        (click)="onTestConnection()"
+        [disabled]="isTesting || !apiKey"
+      >
+        @if (isTesting) {
+          <span class="spinner"></span> Testing...
+        } @else {
+          ⚡ Test Connection
+        }
+      </button>
+
+      <div class="right-actions">
+        <button type="button" class="btn-cancel" (click)="onClose()">Cancel</button>
+        <button
+          type="button"
+          class="btn-primary"
+          (click)="onSave()"
+        >
+          Save & Apply
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

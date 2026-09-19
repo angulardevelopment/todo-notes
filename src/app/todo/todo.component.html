@@ -1,39 +1,411 @@
-<div class="head" id="responsive">
-  <div>
-    <button class="btn" (click)="addNote()"><i class="fa fa-plus"></i>Add </button>
-    <button class="btn" (click)="editNote()"><i class="fa fa-edit"></i> Edit</button>
-    <button class="btn" (click)="deleteNote()"><i class="fa fa-remove"></i>Remove </button>
-    <button class="btn" (click)="saveNote()"><i class="fa fa-save"></i> Save</button>
-  </div>
-  <div class="container">
-    <div class="fontuser">
-      <input type="text" [(ngModel)]="searchNotes" placeholder="Search">
-      <i class="fa fa-search"></i>
+<div class="notes-container">
+  <!-- Top Action & Search Bar -->
+  <div class="top-action-bar">
+    <div class="left-actions">
+      <button class="action-btn primary" (click)="addNote()">
+        <span class="btn-icon">➕</span>
+        <span>New Note</span>
+      </button>
+
+      <button
+        class="action-btn ai-draft-btn"
+        (click)="showAiCustomPrompt = !showAiCustomPrompt"
+        title="Draft a new note from an idea using AI"
+      >
+        <span class="btn-icon">🪄</span>
+        <span>AI Draft Note</span>
+      </button>
+
+      <button
+        class="action-btn rag-btn"
+        [class.active]="showRagSearch"
+        (click)="toggleRagSearch()"
+        title="Ask questions across all notes using Semantic Vector RAG"
+      >
+        <span class="btn-icon">🧠</span>
+        <span>Ask Notes (RAG)</span>
+      </button>
+
+      <button class="action-btn save" (click)="saveNote()" [disabled]="!selectedNote">
+        <span class="btn-icon">💾</span>
+        <span>Save</span>
+      </button>
+
+      <button class="action-btn danger" (click)="deleteNote()" [disabled]="!selectedNote">
+        <span class="btn-icon">🗑️</span>
+        <span>Delete</span>
+      </button>
+    </div>
+
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input
+        type="text"
+        [(ngModel)]="searchNotes"
+        placeholder="Search notes or #tags..."
+        class="search-input"
+      />
+      @if (searchNotes) {
+        <button class="clear-search" (click)="searchNotes = ''">&times;</button>
+      }
     </div>
   </div>
-</div>
 
-
-
-<div class="head">
-
-  <div class="scroll">
-          <!-- <div *ngFor="let j= index;let item of taskList|search:'title,content':searchNotes" -->
-    @for (item of taskList; track item.id; let j = $index) {
-      <div
-        [ngClass]="{'active': selectedNote == item}" (click)="selectedNote = item">
-        <h1 id="textValue">{{item.content}}</h1>
-        <span style="font-weight: 600;">{{item.currentTime}}</span>
-        <span>{{' ' + item.title}}</span>
+  <!-- AI Draft Note Prompt Box (Expandable) -->
+  @if (showAiCustomPrompt) {
+    <div class="ai-prompt-box">
+      <div class="prompt-header">
+        <span class="prompt-badge">✨ AI Note Generator</span>
+        <button class="close-prompt" (click)="showAiCustomPrompt = false">&times;</button>
       </div>
-    }
-  </div>
+      <div class="prompt-inputs">
+        <input
+          type="text"
+          [(ngModel)]="customPromptText"
+          (keyup.enter)="generateNoteWithAi()"
+          placeholder="What would you like to write about? (e.g. 'Project kickoff checklist for client onboarding')"
+          class="prompt-input"
+          [disabled]="isAiLoading"
+        />
+        <button
+          class="prompt-submit-btn"
+          (click)="generateNoteWithAi()"
+          [disabled]="isAiLoading || !customPromptText.trim()"
+        >
+          @if (isAiLoading) {
+            <span class="mini-spinner"></span> Generating...
+          } @else {
+            ✨ Generate
+          }
+        </button>
+      </div>
+    </div>
+  }
 
-  <div class="rightbox">
-    <span class="aligndate">{{selectedNote.modifiedTime}}</span> <br>
-    @if (selectedNote) {
-      <textarea class="textbox" type="text" [ngModel]="selectedNote.content" (ngModelChange)="selectedNote.content = $event" [disabled]="enableDisableSpan" #inputToFocus> </textarea>
-    }
+  <!-- Semantic Vector RAG Panel (Expandable) -->
+  @if (showRagSearch) {
+    <div class="rag-search-box">
+      <div class="rag-header">
+        <div class="rag-badge-group">
+          <span class="rag-badge">🧠 Semantic Vector RAG</span>
+          <span class="rag-sub">Gemini gemini-embedding-001 &bull; Cosine Similarity &bull; Grounded Q&A</span>
+        </div>
+        <button class="close-prompt" (click)="showRagSearch = false">&times;</button>
+      </div>
 
+      <div class="rag-inputs">
+        <input
+          type="text"
+          [(ngModel)]="ragQuery"
+          (keyup.enter)="runAskNotesRag()"
+          placeholder="Ask a question across all notes (e.g. 'What are our sprint milestones?' or 'vacation ideas')..."
+          class="rag-input"
+          [disabled]="isRagLoading"
+        />
+        <div class="rag-btn-group">
+          <button
+            class="rag-submit-btn"
+            (click)="runAskNotesRag()"
+            [disabled]="isRagLoading || !ragQuery.trim()"
+            title="Ask questions and get synthesized answer with citations"
+          >
+            @if (isRagLoading) {
+              <span class="mini-spinner"></span> Synthesizing...
+            } @else {
+              🧠 Ask Notes (RAG)
+            }
+          </button>
+          <button
+            class="rag-vector-btn"
+            (click)="runSemanticVectorSearch()"
+            [disabled]="isRagLoading || !ragQuery.trim()"
+            title="Perform semantic similarity vector search"
+          >
+            ⚡ Vector Match
+          </button>
+        </div>
+      </div>
+
+      @if (isRagLoading) {
+        <div class="rag-loading-row">
+          <span class="mini-spinner"></span>
+          <span>{{ ragStatusMsg }}</span>
+        </div>
+      }
+
+      <!-- Synthesized RAG Q&A Result -->
+      @if (ragAnswer && !isRagLoading) {
+        <div class="rag-answer-card">
+          <div class="card-top">
+            <span class="answer-title">✨ Synthesized Answer (Grounded in Notes)</span>
+            <button class="dismiss-btn" (click)="dismissRag()">&times;</button>
+          </div>
+          <div class="answer-body">
+            <pre class="answer-text">{{ ragAnswer.answer }}</pre>
+          </div>
+          @if (ragAnswer.sources && ragAnswer.sources.length) {
+            <div class="sources-row">
+              <span class="sources-label">Sources & Citations:</span>
+              @for (src of ragAnswer.sources; track src.id) {
+                <button class="source-chip" (click)="openCitedNote(src.id)" title="Open this note in editor">
+                  📄 {{ src.title }} <span class="score-pill">{{ src.score }}% match</span>
+                </button>
+              }
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Pure Vector Similarity Results -->
+      @if (semanticResults && semanticResults.length && !isRagLoading) {
+        <div class="vector-results-card">
+          <div class="card-top">
+            <span class="answer-title">🎯 Top Semantic Matches (Cosine Similarity)</span>
+            <button class="dismiss-btn" (click)="dismissRag()">&times;</button>
+          </div>
+          <div class="vector-matches-list">
+            @for (match of semanticResults; track match.note.id) {
+              <div class="vector-match-item" (click)="openCitedNote(match.note.id)">
+                <div class="match-meta">
+                  <span class="match-title">{{ match.note.title }}</span>
+                  <span class="similarity-badge">{{ Math.round(match.score * 100) }}% Similarity</span>
+                </div>
+                <div class="match-snippet">{{ match.note.content }}</div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Main Split Layout -->
+  <div class="workspace-layout">
+    <!-- Left Column: Note List -->
+    <aside class="notes-sidebar">
+      <div class="sidebar-header">
+        <span class="count-badge">{{ filteredNotes.length }} Notes</span>
+      </div>
+
+      <div class="notes-list-scroll">
+        @for (item of filteredNotes; track item.id) {
+          <div
+            class="note-card"
+            [class.active]="selectedNote?.id === item.id"
+            (click)="selectNote(item)"
+          >
+            <div class="note-card-title">
+              {{ item.title || 'Untitled Note' }}
+            </div>
+            <div class="note-card-preview">
+              {{ item.content || '(Empty note)' }}
+            </div>
+            <div class="note-card-footer">
+              <span class="note-time">{{ item.currentTime || item.modifiedTime }}</span>
+              @if (item.tags && item.tags.length) {
+                <div class="tag-pills">
+                  @for (tag of item.tags.slice(0, 2); track tag) {
+                    <span class="tag-pill">#{{ tag }}</span>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        } @empty {
+          <div class="empty-list">
+            <span class="empty-icon">📭</span>
+            <p>No notes found matching your search.</p>
+          </div>
+        }
+      </div>
+    </aside>
+
+    <!-- Right Column: Note Editor & AI Assistant -->
+    <section class="editor-pane">
+      @if (selectedNote) {
+        <!-- Note Header with Title & Metadata -->
+        <div class="note-meta-header">
+          <input
+            type="text"
+            [(ngModel)]="selectedNote.title"
+            (ngModelChange)="saveNote()"
+            class="title-input"
+            placeholder="Note Title"
+          />
+          <div class="meta-row">
+            <span class="last-edited">Last edited: {{ selectedNote.modifiedTime }}</span>
+            <div class="tags-container">
+              @for (tag of selectedNote.tags; track tag) {
+                <span class="note-tag">#{{ tag }}</span>
+              }
+              <button class="add-tags-btn" (click)="runAiAction('tags')" [disabled]="isAiLoading" title="Suggest AI Tags">
+                🏷️ + AI Tags
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI Assistant Action Bar -->
+        <div class="ai-toolbar">
+          <div class="toolbar-label">
+            <span class="ai-sparkle">✨</span>
+            <span>AI Actions:</span>
+          </div>
+          <div class="toolbar-buttons">
+            <button
+              class="ai-btn"
+              (click)="runAiAction('summarize')"
+              [disabled]="isAiLoading"
+              title="Summarize this note into key takeaways"
+            >
+              📝 Summarize
+            </button>
+            <button
+              class="ai-btn"
+              (click)="runAiAction('grammar')"
+              [disabled]="isAiLoading"
+              title="Fix grammar, spelling, and phrasing"
+            >
+              ✍️ Fix Grammar
+            </button>
+            <button
+              class="ai-btn"
+              (click)="runAiAction('professional')"
+              [disabled]="isAiLoading"
+              title="Rewrite in a professional tone"
+            >
+              👔 Professional
+            </button>
+            <button
+              class="ai-btn"
+              (click)="runAiAction('bullet')"
+              [disabled]="isAiLoading"
+              title="Convert content into clean bullet points"
+            >
+              📌 Bullets
+            </button>
+            <button
+              class="ai-btn"
+              (click)="runAiAction('expand')"
+              [disabled]="isAiLoading"
+              title="Elaborate with additional detail"
+            >
+              🚀 Expand
+            </button>
+            <button
+              class="ai-btn highlight"
+              (click)="runAiAction('actionItems')"
+              [disabled]="isAiLoading"
+              title="Extract actionable tasks and send to Task Board"
+            >
+              ⚡ Extract Tasks
+            </button>
+          </div>
+        </div>
+
+        <!-- AI Loading Indicator -->
+        @if (isAiLoading) {
+          <div class="ai-loading-banner">
+            <div class="shimmer-spinner"></div>
+            <div class="loading-text">
+              <span class="pulse-dot"></span>
+              <span>{{ aiLoadingMessage }}</span>
+            </div>
+          </div>
+        }
+
+        <!-- AI Result Preview Card -->
+        @if (aiResult && !isAiLoading) {
+          <div class="ai-result-card" [class.error-card]="aiResult.error">
+            <div class="result-header">
+              <span class="result-title">
+                ✨ AI Result: <strong>{{ aiResult.action }}</strong>
+              </span>
+              <button class="btn-dismiss" (click)="dismissAiResult()">&times;</button>
+            </div>
+
+            @if (aiResult.error) {
+              <div class="result-error">
+                <p>⚠️ {{ aiResult.error }}</p>
+                <small>Make sure you have entered a valid Gemini API key in AI Settings.</small>
+              </div>
+            }
+
+            @if (aiResult.text) {
+              <div class="result-body">
+                <pre class="result-text">{{ aiResult.text }}</pre>
+              </div>
+              <div class="result-actions">
+                <button class="res-btn replace" (click)="applyAiResultReplace()">
+                  ✅ Replace Note Content
+                </button>
+                <button class="res-btn append" (click)="applyAiResultAppend()">
+                  ➕ Append to Bottom
+                </button>
+                <button class="res-btn copy" (click)="copyAiText()">
+                  📋 Copy Text
+                </button>
+                <button class="res-btn cancel" (click)="dismissAiResult()">
+                  Discard
+                </button>
+              </div>
+            }
+
+            @if (aiResult.items && aiResult.items.length) {
+              <div class="result-items">
+                <p class="items-headline">Found {{ aiResult.items.length }} actionable tasks:</p>
+                <ul class="task-preview-list">
+                  @for (t of aiResult.items; track t.title) {
+                    <li class="task-preview-item">
+                      <span class="task-icon">☑️</span>
+                      <div class="task-detail">
+                        <strong>{{ t.title }}</strong>
+                        @if (t.content) {
+                          <span class="task-sub">{{ t.content }}</span>
+                        }
+                      </div>
+                    </li>
+                  }
+                </ul>
+              </div>
+              <div class="result-actions">
+                <button class="res-btn primary" (click)="addTasksToTodoList()">
+                  📥 Add All to Task Board
+                </button>
+                <button class="res-btn cancel" (click)="dismissAiResult()">
+                  Dismiss
+                </button>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Note Content Editor -->
+        <div class="editor-textarea-wrapper">
+          <textarea
+            #inputToFocus
+            class="note-textarea"
+            [(ngModel)]="selectedNote.content"
+            (ngModelChange)="saveNotesToStorage()"
+            placeholder="Type your notes here, paste meeting notes, or use the ✨ AI Actions above..."
+          ></textarea>
+        </div>
+      } @else {
+        <div class="no-selection-placeholder">
+          <span class="placeholder-icon">📝</span>
+          <h3>No Note Selected</h3>
+          <p>Select a note from the left sidebar or create a new one to begin editing.</p>
+          <button class="action-btn primary" (click)="addNote()">+ Create New Note</button>
+        </div>
+      }
+    </section>
   </div>
 </div>
+
+<!-- Toast Notifications -->
+@if (toastMessage) {
+  <div class="toast-popup" [class.error]="toastMessage.type === 'error'">
+    <span class="toast-icon">{{ toastMessage.type === 'success' ? '✅' : '⚠️' }}</span>
+    <span class="toast-text">{{ toastMessage.text }}</span>
+  </div>
+}

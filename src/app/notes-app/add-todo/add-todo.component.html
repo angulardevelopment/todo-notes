@@ -1,29 +1,71 @@
-<div class="card shadow text-center mb-5">
-  <div class="card-header bg-primary text-light">
-    <h4>ADD TODO</h4>
+<div class="add-todo-card">
+  <div class="card-header">
+    <div class="header-title">
+      <span class="header-icon">➕</span>
+      <h4>Add New Task</h4>
+    </div>
+    <span class="helper-badge">Manual or AI-Assisted</span>
   </div>
 
   <div class="card-body">
     <form #addTodo="ngForm" (submit)="onSubmit()">
-      <div class="form-group">
-        <input
-          type="text"
-          name="todo"
-          class="form-control"
-          placeholder="Add Title . . ."
-          [(ngModel)]="title"
-          required
-        />
-        <input
-          type="text"
-          name="todo"
-          class="form-control"
-          placeholder="Add Todo . . ."
-          [(ngModel)]="todo"
-          required
-        />
+      <div class="form-grid">
+        <div class="form-field">
+          <label for="taskTitle">Task or Project Goal</label>
+          <input
+            id="taskTitle"
+            type="text"
+            name="title"
+            class="form-control"
+            placeholder="e.g. Organize company offsite event..."
+            [(ngModel)]="title"
+            required
+          />
+        </div>
+
+        <div class="form-field">
+          <label for="taskDesc">Details / Description (Optional)</label>
+          <input
+            id="taskDesc"
+            type="text"
+            name="todo"
+            class="form-control"
+            placeholder="e.g. Coordinate venue, catering, and schedule..."
+            [(ngModel)]="todo"
+          />
+        </div>
       </div>
-      <button class="btn btn-primary" [disabled]="addTodo.invalid">ADD</button>
+
+      <div class="action-row">
+        <button
+          type="submit"
+          class="btn-submit"
+          [disabled]="addTodo.invalid"
+        >
+          Add Single Task
+        </button>
+
+        <button
+          type="button"
+          class="btn-ai-breakdown"
+          (click)="breakdownWithAi()"
+          [disabled]="isAiDecomposing || (!title.trim() && !todo.trim())"
+          title="Use Gemini AI to automatically break this goal into 3-5 actionable subtasks"
+        >
+          @if (isAiDecomposing) {
+            <span class="spinner-sm"></span> Analyzing with AI...
+          } @else {
+            ✨ AI Break Down into Subtasks
+          }
+        </button>
+      </div>
     </form>
+
+    @if (statusMessage) {
+      <div class="status-alert" [class.error]="statusMessage.type === 'error'">
+        <span>{{ statusMessage.type === 'success' ? '✅' : '⚠️' }}</span>
+        <span>{{ statusMessage.text }}</span>
+      </div>
+    }
   </div>
 </div>

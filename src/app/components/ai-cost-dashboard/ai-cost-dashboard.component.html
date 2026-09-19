@@ -1,0 +1,372 @@
+<div class="cost-modal-backdrop" (click)="onBackdropClick($event)">
+  <div class="cost-modal-content">
+    <!-- Modal Header -->
+    <div class="modal-header">
+      <div class="header-branding">
+        <div class="header-icon">📊</div>
+        <div class="header-titles">
+          <h2>AI Cost & Scaling Intelligence</h2>
+          <p>Real-time query telemetry, micro-cost ledger, and scale projection simulator</p>
+        </div>
+      </div>
+      <button class="close-btn" (click)="close.emit()" title="Close">&times;</button>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="tabs-nav">
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="activeTab === 'scaling'"
+        (click)="setTab('scaling')"
+      >
+        <span>📈 Scale Simulator</span>
+      </button>
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="activeTab === 'telemetry'"
+        (click)="setTab('telemetry')"
+      >
+        <span>⚡ Live Telemetry Ledger</span>
+      </button>
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="activeTab === 'optimization'"
+        (click)="setTab('optimization')"
+      >
+        <span>💡 Architecture & Savings</span>
+      </button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="modal-body">
+      <!-- TAB 1: SCALE SIMULATOR -->
+      @if (activeTab === 'scaling') {
+        <div class="simulator-view">
+          <!-- Presets Bar -->
+          <div class="presets-section">
+            <span class="presets-label">Quick Scale Scenarios:</span>
+            <div class="preset-buttons">
+              <button
+                type="button"
+                class="preset-chip"
+                [class.active]="simParams.dailyActiveUsers === 100"
+                (click)="applyPreset('starter')"
+              >
+                🌱 100 Users (Starter)
+              </button>
+              <button
+                type="button"
+                class="preset-chip"
+                [class.active]="simParams.dailyActiveUsers === 1000"
+                (click)="applyPreset('growth')"
+              >
+                🚀 1,000 Users (Growth)
+              </button>
+              <button
+                type="button"
+                class="preset-chip"
+                [class.active]="simParams.dailyActiveUsers === 10000"
+                (click)="applyPreset('scale')"
+              >
+                🏢 10,000 Users (Scale)
+              </button>
+              <button
+                type="button"
+                class="preset-chip"
+                [class.active]="simParams.dailyActiveUsers === 100000"
+                (click)="applyPreset('enterprise')"
+              >
+                🌐 100,000 Users (Enterprise)
+              </button>
+            </div>
+          </div>
+
+          <!-- Controls & Sliders Grid -->
+          <div class="simulator-grid">
+            <div class="controls-panel">
+              <h3 class="panel-heading">Simulation Parameters</h3>
+
+              <!-- DAU Slider -->
+              <div class="control-group">
+                <div class="control-header">
+                  <label>Daily Active Users (DAU)</label>
+                  <span class="control-val">{{ simParams.dailyActiveUsers.toLocaleString() }} users</span>
+                </div>
+                <input
+                  type="range"
+                  min="50"
+                  max="100000"
+                  step="50"
+                  [(ngModel)]="simParams.dailyActiveUsers"
+                  (ngModelChange)="recalculate()"
+                />
+              </div>
+
+              <!-- AI Queries Per User -->
+              <div class="control-group">
+                <div class="control-header">
+                  <label>AI Queries / User / Day</label>
+                  <span class="control-val">{{ simParams.aiQueriesPerUserPerDay }} queries</span>
+                </div>
+                <input
+                  type="range"
+                  min="1"
+                  max="30"
+                  step="1"
+                  [(ngModel)]="simParams.aiQueriesPerUserPerDay"
+                  (ngModelChange)="recalculate()"
+                />
+                <span class="control-sub">Summarize, grammar, task decomposition & Copilot</span>
+              </div>
+
+              <!-- Notes Created Per User -->
+              <div class="control-group">
+                <div class="control-header">
+                  <label>New Notes / User / Day</label>
+                  <span class="control-val">{{ simParams.notesPerUserPerDay }} notes</span>
+                </div>
+                <input
+                  type="range"
+                  min="1"
+                  max="10"
+                  step="1"
+                  [(ngModel)]="simParams.notesPerUserPerDay"
+                  (ngModelChange)="recalculate()"
+                />
+                <span class="control-sub">Indexed into vector store via gemini-embedding-001</span>
+              </div>
+
+              <!-- Model Selector -->
+              <div class="control-group">
+                <div class="control-header">
+                  <label>Target Gemini Model</label>
+                </div>
+                <select
+                  [(ngModel)]="simParams.model"
+                  (ngModelChange)="recalculate()"
+                  class="model-select"
+                >
+                  <option value="gemini-2.0-flash">Gemini 2.0 Flash ($0.10 / 1M in, $0.40 / 1M out)</option>
+                  <option value="gemini-1.5-flash">Gemini 1.5 Flash ($0.075 / 1M in, $0.30 / 1M out)</option>
+                  <option value="gemini-1.5-pro">Gemini 1.5 Pro ($1.25 / 1M in, $5.00 / 1M out)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Projections Output Panel -->
+            <div class="results-panel">
+              <h3 class="panel-heading">Monthly Cost Projections</h3>
+
+              <div class="kpi-cards-row">
+                <div class="kpi-card highlight">
+                  <span class="kpi-label">Total Monthly Cost</span>
+                  <span class="kpi-value text-gradient">{{ formatUsd(projection.monthlyTotalCostUsd) }}</span>
+                  <span class="kpi-meta">API + Vectors + Cloud Hosting</span>
+                </div>
+
+                <div class="kpi-card">
+                  <span class="kpi-label">Unit Cost / User / Mo</span>
+                  <span class="kpi-value">{{ formatUsd(projection.costPerUserPerMonthUsd) }}</span>
+                  <span class="kpi-meta">Unbeatable efficiency</span>
+                </div>
+
+                <div class="kpi-card">
+                  <span class="kpi-label">Monthly Queries</span>
+                  <span class="kpi-value">{{ formatTokens(projection.monthlyQueries) }}</span>
+                  <span class="kpi-meta">({{ formatTokens(projection.dailyQueries) }}/day)</span>
+                </div>
+
+                <div class="kpi-card">
+                  <span class="kpi-label">Monthly Tokens</span>
+                  <span class="kpi-value">{{ formatTokens(projection.monthlyTotalTokens) }}</span>
+                  <span class="kpi-meta">In: {{ formatTokens(projection.monthlyInputTokens) }} • Out: {{ formatTokens(projection.monthlyOutputTokens) }}</span>
+                </div>
+              </div>
+
+              <!-- Cost Breakdown Bar / Table -->
+              <div class="breakdown-card">
+                <h4>Expense Breakdown</h4>
+                <div class="breakdown-list">
+                  <div class="breakdown-item">
+                    <span class="item-name">🤖 Gemini Model Inference</span>
+                    <span class="item-cost">{{ formatUsd(projection.monthlyGeminiCostUsd) }} / mo</span>
+                  </div>
+                  <div class="breakdown-item">
+                    <span class="item-name">🧠 Semantic Vector Embeddings</span>
+                    <span class="item-cost">{{ formatUsd(projection.monthlyEmbeddingCostUsd) }} / mo</span>
+                  </div>
+                  <div class="breakdown-item">
+                    <span class="item-name">☁️ Cloud Hosting & Serverless DB</span>
+                    <span class="item-cost">{{ formatUsd(projection.monthlyHostingCostUsd) }} / mo</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Competitor Cost Comparison -->
+              <div class="comparison-card">
+                <div class="comparison-header">
+                  <h4>💡 Cost Comparison with Alternatives</h4>
+                  <span class="badge-saving">Up to 96% Cheaper</span>
+                </div>
+                <div class="table-container">
+                  <table class="comparison-table">
+                    <thead>
+                      <tr>
+                        <th>Provider & Model</th>
+                        <th>Monthly Cost</th>
+                        <th>Difference vs Gemini</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr class="current-row">
+                        <td><strong>✨ Google Gemini (Active)</strong></td>
+                        <td><strong>{{ formatUsd(projection.monthlyGeminiCostUsd) }}</strong></td>
+                        <td><span class="badge-baseline">Baseline</span></td>
+                      </tr>
+                      @for (c of projection.competitors; track c.name) {
+                        <tr>
+                          <td>{{ c.name }}</td>
+                          <td>{{ formatUsd(c.monthlyCostUsd) }}</td>
+                          <td class="text-danger">
+                            +{{ formatUsd(c.differenceUsd) }} ({{ c.differencePercentage }}% more expensive)
+                          </td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- TAB 2: LIVE TELEMETRY LEDGER -->
+      @if (activeTab === 'telemetry') {
+        <div class="telemetry-view">
+          @if (summary$ | async; as summary) {
+            <!-- Live Session KPIs -->
+            <div class="kpi-cards-row">
+              <div class="kpi-card highlight">
+                <span class="kpi-label">Current Session Cost</span>
+                <span class="kpi-value text-gradient">{{ formatUsd(summary.totalCostUsd) }}</span>
+                <span class="kpi-meta">Calculated to micro-cents</span>
+              </div>
+
+              <div class="kpi-card">
+                <span class="kpi-label">Total AI Queries</span>
+                <span class="kpi-value">{{ summary.totalQueries }}</span>
+                <span class="kpi-meta">Across all tools & notes</span>
+              </div>
+
+              <div class="kpi-card">
+                <span class="kpi-label">Total Tokens Processed</span>
+                <span class="kpi-value">{{ formatTokens(summary.totalTokens) }}</span>
+                <span class="kpi-meta">In: {{ formatTokens(summary.totalInputTokens) }} • Out: {{ formatTokens(summary.totalOutputTokens) }}</span>
+              </div>
+
+              <div class="kpi-card">
+                <span class="kpi-label">Free Tier Balance</span>
+                <span class="kpi-value text-success">{{ summary.freeTierQueriesRemaining }}</span>
+                <span class="kpi-meta">Free requests left today (1500 limit)</span>
+              </div>
+            </div>
+          }
+
+          <!-- Query Ledger Table -->
+          <div class="ledger-section">
+            <div class="ledger-header">
+              <h3>Executed AI Queries (Live Ledger)</h3>
+              <button class="clear-btn" (click)="clearLedger()">Clear History</button>
+            </div>
+
+            @if (records$ | async; as records) {
+              @if (records.length === 0) {
+                <div class="empty-ledger">
+                  <div class="empty-icon">⚡</div>
+                  <p>No AI queries executed in this session yet.</p>
+                  <span>Try summarizing a note, asking the Copilot, or using Semantic Vector RAG!</span>
+                </div>
+              } @else {
+                <div class="table-container">
+                  <table class="ledger-table">
+                    <thead>
+                      <tr>
+                        <th>Time</th>
+                        <th>Operation</th>
+                        <th>Model</th>
+                        <th>Latency</th>
+                        <th>Tokens</th>
+                        <th>Cost (USD)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (r of records; track r.id) {
+                        <tr>
+                          <td class="time-cell">{{ r.timestamp }}</td>
+                          <td>
+                            <span class="op-badge">{{ r.operation }}</span>
+                          </td>
+                          <td class="model-cell">{{ r.model }}</td>
+                          <td>{{ r.latencyMs }}ms</td>
+                          <td>
+                            <span class="token-pill">
+                              {{ r.totalTokens }} ({{ r.inputTokens }} in / {{ r.outputTokens }} out)
+                            </span>
+                          </td>
+                          <td class="cost-cell">{{ formatUsd(r.estimatedCostUsd) }}</td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              }
+            }
+          </div>
+        </div>
+      }
+
+      <!-- TAB 3: ARCHITECTURE & OPTIMIZATIONS -->
+      @if (activeTab === 'optimization') {
+        <div class="optimization-view">
+          <div class="opt-grid">
+            <div class="opt-card">
+              <div class="opt-icon">💾</div>
+              <h4>Client-Side Vector Caching</h4>
+              <p>
+                Our <code>RagService</code> caches vector embeddings in <code>localStorage</code> indexed by note ID and SHA hash. Unchanged notes are NEVER re-embedded, cutting embedding API expenses by <strong>over 85%</strong>.
+              </p>
+            </div>
+
+            <div class="opt-card">
+              <div class="opt-icon">⚡</div>
+              <h4>Gemini 2.0 Flash Efficiency</h4>
+              <p>
+                At <strong>$0.10 per 1M input tokens</strong>, Gemini 2.0 Flash delivers flagship-class multimodal reasoning and function calling at 1/25th the cost of OpenAI GPT-4o, making sub-cent unit economics effortless.
+              </p>
+            </div>
+
+            <div class="opt-card">
+              <div class="opt-icon">🛡️</div>
+              <h4>Guardrail Delimiters</h4>
+              <p>
+                By wrapping user content in <code>&lt;USER_DATA&gt;</code> and enforcing JSON schema responses, prompt sizes remain tightly bounded without conversational bloat.
+              </p>
+            </div>
+
+            <div class="opt-card">
+              <div class="opt-icon">🎁</div>
+              <h4>100% Free Development Tier</h4>
+              <p>
+                Google AI Studio provides up to <strong>15 Requests/Minute</strong> and <strong>1,500 Requests/Day</strong> at zero cost, meaning you can develop and test this application completely free.
+              </p>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>

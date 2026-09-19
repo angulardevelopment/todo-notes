@@ -1,23 +1,40 @@
-<div class="head" id="responsive">
-  <div>
-    <button class="btn"><i class="fa fa-plus"></i>List</button>
-  </div>
+<div class="task-board-container">
+  <!-- Top Bar -->
+  <div class="board-header">
+    <div class="board-info">
+      <h2 class="board-title">Task Board</h2>
+      <div class="stats-pills">
+        <span class="stat-pill">Total: {{ todoService.todoList.length }}</span>
+        <span class="stat-pill success">
+          Completed: {{ completedCount }}
+        </span>
+      </div>
+    </div>
 
-  <div>
-    <div>
-      <select (change)="onSelected($event)" class="btn">
-        <option default>Pick a Status</option>
-        <option>{{ taskStatus.All }}</option>
-        <option>{{ taskStatus.Completed }}</option>
-        <option>{{ taskStatus.Incomplete }}</option>
+    <div class="filter-controls">
+      <button class="btn-standup" (click)="triggerStandup()" title="Generate daily briefing using AI Copilot">
+        🌅 AI Standup Coach
+      </button>
+
+      <label for="statusFilter" class="filter-label">Filter:</label>
+      <select
+        id="statusFilter"
+        (change)="onSelected($event)"
+        class="filter-select"
+      >
+        <option [value]="taskStatus.All">All Tasks</option>
+        <option [value]="taskStatus.Incomplete">Pending Only</option>
+        <option [value]="taskStatus.Completed">Completed Only</option>
       </select>
     </div>
   </div>
+
+  <!-- Add Todo Section -->
+  <app-add-todo></app-add-todo>
+
+  <!-- Tasks List -->
+  <app-todo-list
+    [taskList]="taskList"
+    [selectedItem]="selectedItem"
+  ></app-todo-list>
 </div>
-
-<app-todo-list
-  [taskList]="taskList"
-  [selectedItem]="selectedItem"
-></app-todo-list>
-
-<app-add-todo></app-add-todo>
