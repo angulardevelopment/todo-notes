@@ -15,7 +15,7 @@ export class AiSettingsComponent implements OnInit {
 
   apiKey = '';
   showKey = false;
-  selectedModel = 'gemini-3.5-flash';
+  selectedModel = 'gemini-2.5-flash';
   models: AiModelOption[] = [];
 
   isTesting = false;

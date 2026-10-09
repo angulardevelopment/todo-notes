@@ -34,7 +34,7 @@ export class AiCostDashboardComponent implements OnInit {
     aiQueriesPerUserPerDay: 8,
     avgInputTokensPerQuery: 350,
     avgOutputTokensPerQuery: 180,
-    model: 'gemini-2.0-flash',
+    model: 'gemini-3.6-flash',
   };
 
   public projection!: ScaleProjectionResult;

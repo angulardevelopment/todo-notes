@@ -4,7 +4,7 @@ import { TodoComponent } from "./todo/todo.component";
 
 export const routes: Routes = [
     { path: '', redirectTo: 'notes', pathMatch: 'full' },
-    { path: 'todo', component: TodoComponent },
-    { path: 'notes', component: NotesComponent },
+    { path: 'notes', component: TodoComponent },
+    { path: 'todo', component: NotesComponent },
     { path: '**', redirectTo: 'notes' },
 ];

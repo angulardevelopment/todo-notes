@@ -19,7 +19,7 @@ c:\demoapps\angulardevelopment\todo-notes\
 │   │   ├── components/
 │   │   │   ├── agent-copilot/     # Floating AI Copilot chat drawer with live tool execution badges
 │   │   │   └── ai-settings/       # Gemini API key & model configuration modal
-│   │   ├── notes-app/             # Task Board (/notes)
+│   │   ├── notes-app/             # Task Board (/todo)
 │   │   │   ├── add-todo/          # New task creation + AI task breakdown
 │   │   │   ├── todo-list/         # Task checklist & toggle status
 │   │   │   ├── todo.service.ts    # Central reactive task store (todos$, addTodo, toggleTodo)
@@ -28,7 +28,7 @@ c:\demoapps\angulardevelopment\todo-notes\
 │   │   │   ├── agent.service.ts   # Gemini Function Calling Orchestrator (8 local tools)
 │   │   │   ├── ai.service.ts      # Direct Gemini API client (summarize, polish, decompose)
 │   │   │   └── notes.service.ts   # Central reactive notes store (notes$, addNote, updateNote)
-│   │   └── todo/                  # Notes Editor (/todo) with AI Toolbar (Summarize, Grammar, Extract)
+│   │   └── todo/                  # Notes Editor (/notes) with AI Toolbar (Summarize, Grammar, Extract)
 │   ├── environments/              # Environment config placeholders
 │   └── styles.scss                # Design system & typography
 └── AGENTS.md                      # Workspace rules & IDE instructions
@@ -73,9 +73,9 @@ Never mutate `taskList` or `todoList` in-place without emitting new references t
 
 ### Rule 3: Active Gemini Model IDs
 Always use currently supported Google Gemini API models:
-* `gemini-2.0-flash` (Recommended default: fast multimodal reasoning & function calling)
-* `gemini-1.5-flash` (Cost-effective workhorse)
-* `gemini-1.5-pro` (Complex instructions & reasoning)
+* `gemini-3.6-flash` (Recommended default: fast multimodal reasoning & function calling)
+* `gemini-2.5-flash` (Cost-effective workhorse)
+* `gemini-3.8-flash` (Complex instructions & reasoning)
 * `gemini-embedding-001` (Active standard for text embeddings, replaces retired `text-embedding-004`)
 *(Do not use unreleased or retired model IDs like `gemini-2.5-flash` or `text-embedding-004` as they return 404 API errors).*
 

@@ -22,18 +22,18 @@ export class AiService {
 
   readonly availableModels: AiModelOption[] = [
     {
-      id: 'gemini-2.0-flash',
-      name: 'Gemini 2.0 Flash',
+      id: 'gemini-3.6-flash',
+      name: 'Gemini Flash',
       description: 'Ultra-fast multimodal reasoning & function calling (Recommended)',
     },
     {
-      id: 'gemini-1.5-flash',
-      name: 'Gemini 1.5 Flash',
+      id: 'gemini-2.5-flash',
+      name: 'Gemini 2.5 Flash',
       description: 'Reliable, fast, and cost-effective workhorse model',
     },
     {
-      id: 'gemini-1.5-pro',
-      name: 'Gemini 1.5 Pro',
+      id: 'gemini-3.8-flash',
+      name: 'Gemini Pro',
       description: 'Advanced reasoning and complex instruction following',
     },
   ];
@@ -58,9 +58,9 @@ export class AiService {
 
   getSelectedModel(): string {
     const model = localStorage.getItem(this.MODEL_KEY);
-    // Auto-migrate if user had the invalid 2.5 placeholder
-    if (!model || model === 'gemini-2.5-flash') {
-      return 'gemini-2.0-flash';
+    // Auto-migrate if user had the invalid placeholder
+    if (!model) {
+      return 'gemini-3.6-flash';
     }
     return model;
   }

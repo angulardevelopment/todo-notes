@@ -110,6 +110,7 @@ export class AgentService {
         this.isThinkingSubject.next(false);
       });
     }
+    console.log(this,userText, 'df')
   }
 
   /**

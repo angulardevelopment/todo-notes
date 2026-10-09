@@ -28,7 +28,7 @@ export interface ScaleSimulationParams {
   aiQueriesPerUserPerDay: number;
   avgInputTokensPerQuery: number;
   avgOutputTokensPerQuery: number;
-  model: 'gemini-2.0-flash' | 'gemini-1.5-flash' | 'gemini-1.5-pro';
+  model: 'gemini-3.6-flash' | 'gemini-2.5-flash' | 'gemini-3.8-flash';
 }
 
 export interface ScaleProjectionResult {
@@ -63,9 +63,9 @@ export class CostTrackerService {
   // Gemini 1.5 Pro: $1.25 / 1M input, $5.00 / 1M output
   // Embedding: ~$0.025 / 1M chars (~$0.10 / 1M tokens)
   private readonly MODEL_RATES: Record<string, { inputPerM: number; outputPerM: number }> = {
-    'gemini-2.0-flash': { inputPerM: 0.10, outputPerM: 0.40 },
-    'gemini-1.5-flash': { inputPerM: 0.075, outputPerM: 0.30 },
-    'gemini-1.5-pro': { inputPerM: 1.25, outputPerM: 5.00 },
+    'gemini-3.6-flash': { inputPerM: 0.10, outputPerM: 0.40 },
+    'gemini-2.5-flash': { inputPerM: 0.075, outputPerM: 0.30 },
+    'gemini-3.8-flash': { inputPerM: 1.25, outputPerM: 5.00 },
     'gemini-embedding-001': { inputPerM: 0.10, outputPerM: 0.0 },
     'default': { inputPerM: 0.10, outputPerM: 0.40 },
   };
@@ -218,7 +218,7 @@ export class CostTrackerService {
     const monthlyTotalTokens = monthlyInputTokens + monthlyOutputTokens;
 
     // Gemini API Cost
-    const rates = this.MODEL_RATES[model] || this.MODEL_RATES['gemini-2.0-flash'];
+    const rates = this.MODEL_RATES[model] || this.MODEL_RATES['gemini-3.6-flash'];
     const monthlyGeminiCostUsd =
       (monthlyInputTokens / 1_000_000) * rates.inputPerM +
       (monthlyOutputTokens / 1_000_000) * rates.outputPerM;
