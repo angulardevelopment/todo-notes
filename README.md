@@ -131,7 +131,7 @@ devops pipeline implementation build release feature
 Frontend Development Enhancement
 
 ```
-https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=AIzaSyDEy6ocOSQtYUWejb87z2gIgNDYQyuot8s
+https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key={key}
 {"contents":[{"parts":[{"text":"Write a comprehensive, well-structured note based on this request: \"devops pipeline implemenatipon nuild release feature\".\nUse Markdown bullet points, headings, and clear formatting."}]}],"generationConfig":{"temperature":0.4}}
 
 {
