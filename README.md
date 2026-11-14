@@ -168,7 +168,18 @@ https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generat
     "responseId": "Q73Harn9OMKkjuMP2uqouAg"
 }
 ```
- 
+summarize thoughts, auto-generate todos, and stay organized effortlessly.
+
+**SmartNotes — AI-Powered Notes & Tasks**
+SmartNotes is a modern productivity application built with Angular that bridges the gap between unstructured thoughts and actionable tasks. By integrating AI directly into your workflow, SmartNotes automatically summarizes long notes, extracts action items into to-do lists, and categorizes your workspace in real time.
+
+**Key Highlights**
+
+* **AI-Assisted Drafting:** Summarize, expand, or format rough notes with a single click.
+* **Smart Task Extraction:** Automatically detect and convert action items from your notes into trackable to-dos.
+* **Reactive Architecture:** Built with modern Angular for fast, seamless state management and a responsive UI.
+
+
 ## Subscribe and Stay Updated!
 
 Don't miss out on new videos! Subscribe to my channel and hit the notification bell 🔔 to receive updates whenever I upload fresh content. Let's learn, laugh, and explore together!
